@@ -1,32 +1,34 @@
-version: "3.3"
-
+---
+version: "3"
 services:
-  db:
-    image: mysql:5.7
+  kanji_genzouw_com_db:
+    image: mysql:5.7.29
     volumes:
-      - db_data:/var/lib/mysql
-    restart: always
+      - kanji_genzouw_com_db_data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: somewordpress
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress
-      MYSQL_PASSWORD: wordpress
-
-  wordpress:
-    depends_on:
-      - db
-    build:
-      context: .
+      MYSQL_DATABASE: kanji_genzouw_com_db
+      MYSQL_USER: kanji_genzouw_com_user
+      MYSQL_PASSWORD: kanji_genzouw_com_pass
+      MYSQL_ROOT_PASSWORD: rootroot
+    restart: always
     ports:
-      - "8000:80"
-    restart: always
-    volumes:
-      - ./html:/var/www/html
-    environment:
-      WORDPRESS_DB_HOST: db:3306
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
-      WORDPRESS_DB_NAME: wordpress
+      - 3309:3306
 
 volumes:
-  db_data: {}
+  kanji_genzouw_com_db_data: {}
+
+      #wordpress:
+      #  depends_on:
+      #    - db
+      #  build:
+      #    context: .
+      #  ports:
+      #    - "10104:80"
+      #  restart: always
+      #  volumes:
+      #    - ./html:/var/www/html
+      #  environment:
+      #    WORDPRESS_DB_HOST: db:3306
+      #    WORDPRESS_DB_USER: wordpress
+      #    WORDPRESS_DB_PASSWORD: wordpress
+      #    WORDPRESS_DB_NAME: wordpress
