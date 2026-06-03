@@ -4,11 +4,7 @@
   "description": "Default WP Theme",
   "author": "The WordPress Contributors",
   "license": "GPL-2.0-or-later",
-  "keywords": [
-    "WordPress",
-    "Theme",
-    "TwentyTwenty"
-  ],
+  "keywords": ["WordPress", "Theme", "TwentyTwenty"],
   "homepage": "https://github.com/wordpress/twentytwenty#readme",
   "repository": {
     "type": "git",
@@ -27,11 +23,10 @@
     "stylelint-a11y": "^1.2.3"
   },
   "overrides": {
-    "trim": "^1.0.1"
+    "trim": "^1.0.1",
+    "serialize-javascript": "^7.0.5"
   },
-  "browserslist": [
-    "extends @wordpress/browserslist-config"
-  ],
+  "browserslist": ["extends @wordpress/browserslist-config"],
   "rtlcssConfig": {
     "options": {
       "autoRename": false,
