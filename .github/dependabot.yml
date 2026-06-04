@@ -1,0 +1,13 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/html/wp-content/themes/twentytwenty"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 0
+    ignore:
+      # webpack-dev-server: already pinned to ^5.2.4 via package.json "overrides" (PR #41).
+      # @wordpress/scripts@32.3.0 still requires webpack-dev-server@^4.15.1, so Dependabot
+      # cannot resolve a direct manifest upgrade and fails with security_update_not_possible.
+      # The override forces the patched version at install time.
+      - dependency-name: "webpack-dev-server"
