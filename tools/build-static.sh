@@ -112,6 +112,13 @@ for html in dest.rglob("*.html"):
     # 残ったクエリ付き参照を落とす
     t = re.sub(r'(\.(?:css|js))\?v=\d+', r'\1', t)
 
+    # ゲームは play-kanji.genzouw.com から kanji.genzouw.com/play/ へ統合した。
+    # 紹介サイト側のリンクを新しい配置に向ける。
+    # JSON-LD の中ではスラッシュがエスケープされている ("https:\/\/play-kanji...") ため、
+    # そちらも合わせて置換する。構造化データに古い URL が残ると検索側に誤って伝わる。
+    t = t.replace("https://play-kanji.genzouw.com", "https://kanji.genzouw.com/play/")
+    t = t.replace("https:\\/\\/play-kanji.genzouw.com", "https:\\/\\/kanji.genzouw.com\\/play\\/")
+
     html.write_text(t, encoding="utf-8")
 
 files = [f for f in dest.rglob("*") if f.is_file()]

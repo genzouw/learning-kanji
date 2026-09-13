@@ -11,6 +11,7 @@
 | --- | --- |
 | `public/` | 配信する静的ファイル。**これが本番の実体** |
 | `tools/build-static.sh` | WordPress から静的サイトを生成するスクリプト |
+| `game/` | ゲーム本体のソース（旧 play-kanji.genzouw.com）。`game/kanji-git.bundle` に元の git 履歴 |
 | `html/` | 移行前の WordPress 本体（参照用） |
 | `docker-compose.yml` | 移行前の DB コンテナ定義（参照用） |
 | `*.dump.gz` | 移行前の DB ダンプ（参照用） |
@@ -49,4 +50,31 @@ WordPress 時代の permalink は `/archives/<post_id>` で、これを維持し
 配信側では CloudFront Function が `/archives/90` を `/kanji/archives/90/index.html`
 へ解決している（`genzouw.com` リポジトリの `cloudfront-spa` モジュール、`mode = "static"`）。
 
-なおゲーム本体は別サイトの [play-kanji.genzouw.com](https://play-kanji.genzouw.com) にある。
+## ゲームの統合について
+
+ゲームはもともと `play-kanji.genzouw.com` で配信していたが、2026-09-13 に
+`kanji.genzouw.com/play/` へ統合した。旧ドメインは 301 でリダイレクトされる。
+
+ソースは `game/` にある。**GitHub 上の元リポジトリ `genzouw/kanji` は削除済みで、
+さくらの VPS 上にしか残っていなかった**ものを取り込んだ。git 履歴は
+`game/kanji-git.bundle` に保全してある（`git clone kanji-git.bundle` で復元できる）。
+
+### ゲームのビルド
+
+webpack 3 / Vue 2 の構成で、現行の Node では動かない。Docker で当時相当の
+Node を使う。
+
+```bash
+cd game
+docker run --rm -v "$PWD:/app" -w /app node:10-buster sh -c 'yarn install && npm run build'
+cp -r dist/* ../public/play/
+```
+
+`/play/` 配下で配信するため、以下を設定済み。**ルート直下に戻す場合は両方を戻すこと。**
+
+- `config/index.js` の `assetsPublicPath: '/play/'`
+- `src/router/index.js` の `base: '/play/'`
+
+配信側では CloudFront Function が `/play/` 配下の未知パスを `/play/index.html` に
+返す（`genzouw.com` リポジトリの `cloudfront-spa` モジュール、`spa_paths`）。
+Vue Router が history mode のため、これが無いとリロードで 404 になる。
