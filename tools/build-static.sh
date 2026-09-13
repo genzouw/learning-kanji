@@ -74,7 +74,8 @@ if skip:
 
 # 2) ファイルを配置する。/archives/90.html は /archives/90/index.html へ移す。
 #    現行 URL が /archives/90 (拡張子なし) のため、そのパスで配信できる形にする。
-url_moves = {}
+#    元の WordPress HTML は最初から拡張子なしの permalink でリンクしているため、
+#    この移動に伴う内部リンクの書き換えは不要。
 for f in sorted(src.rglob("*")):
     if not f.is_file():
         continue
@@ -86,9 +87,7 @@ for f in sorted(src.rglob("*")):
     if rel.endswith(".html") and rel != "index.html":
         stem = rel[: -len(".html")]
         if not stem.endswith("/index"):
-            new_rel = stem + "/index.html"
-            url_moves["/" + rel] = "/" + stem
-            rel = new_rel
+            rel = stem + "/index.html"
 
     out = dest / rel
     out.parent.mkdir(parents=True, exist_ok=True)
