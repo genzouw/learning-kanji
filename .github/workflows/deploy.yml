@@ -1,0 +1,73 @@
+# =============================================================================
+# kanji.genzouw.com デプロイ
+# =============================================================================
+# main への push で public/ を S3 へ同期し、CloudFront のキャッシュを消す。
+#
+# public/ は WordPress を静的化した生成物で、リポジトリで管理している。
+# さくらの VPS 停止後は tools/build-static.sh を再実行できないため、
+# 生成物そのものを資産として持つ。
+# =============================================================================
+name: deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'public/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  AWS_REGION: ap-northeast-1
+  S3_BUCKET: genzouw-static-content
+  S3_PREFIX: kanji
+  CLOUDFRONT_DISTRIBUTION_ID: E6OM0XCJX1HGU
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write # OIDC で AWS ロールを引き受けるために必要
+      contents: read
+
+    # デプロイは GitHub Environment 経由に限定している。この宣言があると
+    # OIDC トークンの subject が
+    #
+    #   repo:genzouw/learning-kanji:environment:production
+    #
+    # となり、AWS 側の信頼ポリシーがこの形だけを許可している。environment を
+    # 宣言しないワークフローや main 以外のブランチからのワークフローは、
+    # デプロイ用ロールを引き受けられない。
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@f24d7193d98baebaeacc7e2227925dd47cc267f5 # v4.2.0
+        with:
+          role-to-assume: arn:aws:iam::107060754911:role/genzouw-github-actions-deploy
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Sync to S3
+        run: |
+          aws s3 sync public/ "s3://${S3_BUCKET}/${S3_PREFIX}/" \
+            --delete \
+            --cache-control "public, max-age=3600"
+
+      - name: Invalidate CloudFront
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${CLOUDFRONT_DISTRIBUTION_ID}" \
+            --paths "/*"
