@@ -11,7 +11,7 @@
 | --- | --- |
 | `public/` | 配信する静的ファイル。**これが本番の実体** |
 | `tools/build-static.sh` | WordPress から静的サイトを生成するスクリプト |
-| `game/` | ゲーム本体のソース（旧 play-kanji.genzouw.com）。`game/kanji-git.bundle` に元の git 履歴 |
+| `game/` | ゲーム本体のソース（旧 play-kanji.genzouw.com）。`game/kanji-git.bundle` に元の git 履歴と依存定義 |
 | `html/` | 移行前の WordPress 本体（参照用） |
 | `docker-compose.yml` | 移行前の DB コンテナ定義（参照用） |
 | `*.dump.gz` | 移行前の DB ダンプ（参照用） |
@@ -59,15 +59,26 @@ WordPress 時代の permalink は `/archives/<post_id>` で、これを維持し
 さくらの VPS 上にしか残っていなかった**ものを取り込んだ。git 履歴は
 `game/kanji-git.bundle` に保全してある（`git clone kanji-git.bundle` で復元できる）。
 
+### 依存定義を追跡していない理由
+
+`game/package.json` と `game/yarn.lock` はこのリポジトリでは追跡していない。
+webpack 3 / Vue 2 / axios 0.19 / firebase 6 という 2019 年当時の依存ツリーで、
+CI でも本番でも一切インストールされないにもかかわらず、Dependabot alerts を
+252 件生み続けていたため。両ファイルとも `game/kanji-git.bundle` に保全されており、
+ビルドするときだけ取り出す。
+
 ### ゲームのビルド
 
-webpack 3 / Vue 2 の構成で、現行の Node では動かない。Docker で当時相当の
-Node を使う。
+webpack 3 / Vue 2 の構成で、現行の Node では動かない。依存定義を bundle から
+取り出したうえで、Docker で当時相当の Node を使う。
 
 ```bash
 cd game
+git clone ./kanji-git.bundle /tmp/kanji-src
+cp /tmp/kanji-src/package.json /tmp/kanji-src/yarn.lock .
 docker run --rm -v "$PWD:/app" -w /app node:10-buster sh -c 'yarn install && npm run build'
 cp -r dist/* ../public/play/
+rm package.json yarn.lock  # 追跡対象に戻さない
 ```
 
 `/play/` 配下で配信するため、以下を設定済み。**ルート直下に戻す場合は両方を戻すこと。**
