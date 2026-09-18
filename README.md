@@ -12,7 +12,7 @@
 | `public/` | 配信する静的ファイル。**これが本番の実体** |
 | `tools/build-static.sh` | WordPress から静的サイトを生成するスクリプト |
 | `game/` | ゲーム本体のソース（旧 play-kanji.genzouw.com）。`game/kanji-git.bundle` に元の git 履歴 |
-| `html/` | 移行前の WordPress 本体（参照用） |
+| `html/` | 移行前の WordPress 本体（参照用）。テーマの npm ビルド資材は撤去済み |
 | `docker-compose.yml` | 移行前の DB コンテナ定義（参照用） |
 | `*.dump.gz` | 移行前の DB ダンプ（参照用） |
 
@@ -49,6 +49,18 @@ WordPress 時代の permalink は `/archives/<post_id>` で、これを維持し
 
 配信側では CloudFront Function が `/archives/90` を `/kanji/archives/90/index.html`
 へ解決している（`genzouw.com` リポジトリの `cloudfront-spa` モジュール、`mode = "static"`）。
+
+## 移行前の WordPress について
+
+`html/` は移行前の WordPress 本体で、参照用に残している。配信には一切使わない
+（本番の実体は `public/`）。
+
+同梱テーマ twentynineteen / twentytwenty / twentytwentyone には、WordPress 公式が
+テーマ開発用に配布している npm ビルド資材（`package.json`、`package-lock.json`、
+`postcss.config.js`、`.stylelintrc*`）が含まれていたが、撤去した。このリポジトリでは
+一度もインストール・実行しておらず、Dependabot alerts を 26 件生み続けていたため。
+コンパイル済みの `style.css` / `print.css` / `style-rtl.css` は残っているので、
+参照用途には影響しない。必要になった場合は wordpress.org の配布物から取得できる。
 
 ## ゲームの統合について
 
