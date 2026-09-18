@@ -2,6 +2,10 @@
 
 > A Vue.js project
 
+> **注意**: `package.json` / `yarn.lock` はこのリポジトリでは追跡していない。
+> 以下のコマンドを実行する前に `kanji-git.bundle` から取り出すこと。
+> 手順と理由はリポジトリルートの `README.md` を参照。
+
 ## Build Setup
 
 ``` bash
