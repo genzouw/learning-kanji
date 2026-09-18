@@ -87,3 +87,8 @@ typings/
 
 
 dist/
+
+# 依存定義は追跡しない。ビルド時に kanji-git.bundle から取り出す。
+# 詳細はリポジトリルートの README.md「依存定義を追跡していない理由」を参照。
+package.json
+yarn.lock

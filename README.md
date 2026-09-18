@@ -7,14 +7,14 @@
 
 ## 構成
 
-| パス | 内容 |
-| --- | --- |
-| `public/` | 配信する静的ファイル。**これが本番の実体** |
-| `tools/build-static.sh` | WordPress から静的サイトを生成するスクリプト |
-| `game/` | ゲーム本体のソース（旧 play-kanji.genzouw.com）。`game/kanji-git.bundle` に元の git 履歴 |
-| `html/` | 移行前の WordPress 本体（参照用）。テーマの npm ビルド資材は撤去済み |
-| `docker-compose.yml` | 移行前の DB コンテナ定義（参照用） |
-| `*.dump.gz` | 移行前の DB ダンプ（参照用） |
+| パス                    | 内容                                                                                               |
+| ----------------------- | -------------------------------------------------------------------------------------------------- |
+| `public/`               | 配信する静的ファイル。**これが本番の実体**                                                         |
+| `tools/build-static.sh` | WordPress から静的サイトを生成するスクリプト                                                       |
+| `game/`                 | ゲーム本体のソース（旧 play-kanji.genzouw.com）。`game/kanji-git.bundle` に元の git 履歴と依存定義 |
+| `html/`                 | 移行前の WordPress 本体（参照用）。テーマの npm ビルド資材は撤去済み                               |
+| `docker-compose.yml`    | 移行前の DB コンテナ定義（参照用）                                                                 |
+| `*.dump.gz`             | 移行前の DB ダンプ（参照用）                                                                       |
 
 ## デプロイ
 
@@ -40,11 +40,11 @@ VPS が生きている間に再生成する場合:
 
 WordPress 時代の permalink は `/archives/<post_id>` で、これを維持している。
 
-| URL | 内容 |
-| --- | --- |
-| `/` | ようこそ！（固定ページ） |
-| `/archives/90` | 公式ページを公開しました。 |
-| `/archives/106` | 小学校1年生の問題を追加しました！ |
+| URL             | 内容                                         |
+| --------------- | -------------------------------------------- |
+| `/`             | ようこそ！（固定ページ）                     |
+| `/archives/90`  | 公式ページを公開しました。                   |
+| `/archives/106` | 小学校1年生の問題を追加しました！            |
 | `/archives/123` | ボタンが見切れる場合があるため修正しました。 |
 
 配信側では CloudFront Function が `/archives/90` を `/kanji/archives/90/index.html`
@@ -71,15 +71,31 @@ WordPress 時代の permalink は `/archives/<post_id>` で、これを維持し
 さくらの VPS 上にしか残っていなかった**ものを取り込んだ。git 履歴は
 `game/kanji-git.bundle` に保全してある（`git clone kanji-git.bundle` で復元できる）。
 
+### 依存定義を追跡していない理由
+
+`game/package.json` と `game/yarn.lock` はこのリポジトリでは追跡していない。
+webpack 3 / Vue 2 / axios 0.19 / firebase 6 という 2019 年当時の依存ツリーで、
+CI でも本番でも一切インストールされないにもかかわらず、Dependabot alerts を
+252 件生み続けていたため。両ファイルとも `game/kanji-git.bundle` に保全されており、
+ビルドするときだけ取り出す。
+
+`game/kanji-git.bundle` 側の依存定義は取り出した時点のスナップショットであり、
+追跡を止めた後にこのリポジトリへ個別適用した脆弱性修正（例:
+becf053f7 の brace-expansion 修正）は自動では反映されない。bundle にも同じ修正を
+コミットしておかないと、次に取り出したときに同じ脆弱性を踏み直すことになる。
+
 ### ゲームのビルド
 
-webpack 3 / Vue 2 の構成で、現行の Node では動かない。Docker で当時相当の
-Node を使う。
+webpack 3 / Vue 2 の構成で、現行の Node では動かない。依存定義を bundle から
+取り出したうえで、Docker で当時相当の Node を使う。
 
 ```bash
 cd game
+git clone ./kanji-git.bundle /tmp/kanji-src
+cp /tmp/kanji-src/package.json /tmp/kanji-src/yarn.lock .
 docker run --rm -v "$PWD:/app" -w /app node:10-buster sh -c 'yarn install && npm run build'
 cp -r dist/* ../public/play/
+rm package.json yarn.lock  # 追跡対象に戻さない
 ```
 
 `/play/` 配下で配信するため、以下を設定済み。**ルート直下に戻す場合は両方を戻すこと。**
