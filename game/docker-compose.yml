@@ -1,9 +1,0 @@
-version: "3"
-services:
-  web:
-    build:
-      context: .
-    restart: always
-    ports:
-      - 10103:80
-
