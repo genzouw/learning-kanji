@@ -47,24 +47,4 @@ let router = new Router({
   ]
 })
 
-/*
-router.beforeEach((to, next) => {
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  if (requiresAuth) {
-    firebase.auth().onAuthStateChanged(function (user) {
-      if (user) {
-        next()
-      } else {
-        next({
-          path: '/signUp',
-          query: { redirect: to.fullPath }
-        })
-      }
-    })
-  } else {
-    next()
-  }
-})
-*/
-
 export default router

@@ -12,7 +12,6 @@ import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './assets/yeti/bootstrap.min.css'
-import firebase from 'firebase'
 import ToggleSwitch from 'vuejs-toggle-switch'
 Vue.use(Vuex)
 Vue.use(Meta)
@@ -27,17 +26,6 @@ Vue.use(ToggleSwitch)
 Validator.localize('ja', ja)
 
 Vue.config.productionTip = false
-
-var firebaseConfig = {
-  apiKey: 'REDACTED_API_KEY',
-  authDomain: 'kanji-genzouw-com.firebaseapp.com',
-  databaseURL: 'https://kanji-genzouw-com.firebaseio.com',
-  projectId: 'kanji-genzouw-com',
-  storageBucket: 'kanji-genzouw-com.appspot.com',
-  messagingSenderId: '565783098421'
-}
-
-firebase.initializeApp(firebaseConfig)
 
 const app = new Vue({
   store: new Vuex.Store({

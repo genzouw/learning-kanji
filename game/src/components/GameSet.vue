@@ -69,7 +69,6 @@
 </template>
 
 <script>
-import firebase from 'firebase'
 import moment from 'moment'
 
 export default {
@@ -94,34 +93,6 @@ export default {
     fetchData () {
       this.countOfQuestions = Number(this.$route.params.countOfQuestions)
       this.score = Number(this.$route.params.score)
-
-      firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-          let db = firebase.firestore()
-
-          let now = moment()
-
-          let usersRef = db.collection('users')
-
-          let newData = {}
-          newData[now.unix()] = {
-            score: this.score,
-            countOfQuestions: this.countOfQuestions
-          }
-          usersRef.doc(user.email).set(
-            newData,
-            {
-              merge: true
-            }
-          ).then(() => {
-            usersRef.doc(user.email).get().then((doc) => {
-              if (doc.exists) {
-                this.scores = doc.data()
-              }
-            })
-          })
-        }
-      })
     }
   },
   computed: {

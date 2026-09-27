@@ -11,8 +11,6 @@
 </template>
 
 <script>
-import firebase from 'firebase'
-
 export default {
   name: 'Signin',
   data: function () {
@@ -23,24 +21,8 @@ export default {
   },
   methods: {
     signIn: function () {
-      firebase.auth().signInWithEmailAndPassword(this.username, this.password).then(
-        user => {
-          this.$router.push('/')
-        },
-        error => {
-          let message = error.message
-          switch (error.code) {
-            case 'auth/user-not-found':
-              message = 'このメールアドレスに対応するユーザが見つかりません。ユーザーが削除された可能性があります。'
-              break
-            default:
-              console.log(error.code)
-              console.log(error.message)
-              break
-          }
-          alert(message)
-        }
-      )
+      alert('現在ログイン機能は停止しています。')
+      this.$router.push('/')
     }
   }
 }
