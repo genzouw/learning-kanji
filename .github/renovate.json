@@ -53,30 +53,11 @@
       ]
     },
     {
-      "description": "docker-compose のイメージ更新には docker ラベルを付ける",
-      "matchManagers": [
-        "docker-compose"
-      ],
-      "addLabels": [
-        "docker"
-      ]
-    },
-    {
       "description": "GitHub Actions の更新は 1 PR にまとめる",
       "matchManagers": [
         "github-actions"
       ],
       "groupName": "github-actions"
-    },
-    {
-      "description": [
-        "html/ は静的化前の WordPress 本体のスナップショットで、composer install もデプロイもしない。",
-        "同梱ライブラリの composer.json (wp-includes/sodium_compat など) を更新しても意味が無いため対象外にする。"
-      ],
-      "matchFileNames": [
-        "html/**"
-      ],
-      "enabled": false
     }
   ]
 }
