@@ -59,7 +59,6 @@
 </template>
 
 <script>
-import firebase from 'firebase'
 import moment from 'moment'
 
 export default {
@@ -80,19 +79,7 @@ export default {
       return moment.unix(Number(unixtime)).format('Mがつ Dにち (ddd) HH:mm')
     },
     fetchData () {
-      firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-          let db = firebase.firestore()
-
-          let usersRef = db.collection('users')
-
-          usersRef.doc(user.email).get().then((doc) => {
-            if (doc.exists) {
-              this.scores = doc.data()
-            }
-          })
-        }
-      })
+      this.scores = []
     }
   },
   computed: {

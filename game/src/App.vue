@@ -52,8 +52,6 @@
 </template>
 
 <script>
-import firebase from 'firebase'
-
 export default {
   name: 'App',
   metaInfo: {
@@ -144,11 +142,6 @@ export default {
   data () {
     return {}
   },
-  created () {
-    firebase.auth().onAuthStateChanged(user => {
-      this.$store.commit('updateUser', user)
-    })
-  },
   computed: {
     user () {
       return this.$store.state.user
@@ -156,13 +149,8 @@ export default {
   },
   methods: {
     signOut () {
-      if (!window.confirm('ログアウトします。よろしいですか？')) return false
-      firebase
-        .auth()
-        .signOut()
-        .then(() => {
-          this.$router.push('/')
-        })
+      this.$store.commit('updateUser', null)
+      this.$router.push('/')
     },
     profile () {
       this.$router.push('/profile')
