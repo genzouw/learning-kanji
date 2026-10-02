@@ -8,11 +8,13 @@ on:
     branches: [main, master]
     paths:
       - '.github/workflows/**'
+      - '.github/actions/**'
       - '.github/actionlint*'
   pull_request:
     branches: [main, master]
     paths:
       - '.github/workflows/**'
+      - '.github/actions/**'
       - '.github/actionlint*'
 
 concurrency:
