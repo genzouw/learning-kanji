@@ -28,4 +28,4 @@ jobs:
     permissions:
       contents: read
       security-events: write
-    uses: genzouw/ci-workflows/.github/workflows/trivy.yml@72c41cae612a1cea531036dbe6d1970266b1b547 # v1.4.7
+    uses: genzouw/ci-workflows/.github/workflows/trivy.yml@27f66d762f34f530c05e930829e23811b925cb7d # v1.5.9

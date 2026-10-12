@@ -26,4 +26,4 @@ permissions:
 
 jobs:
   shellcheck:
-    uses: genzouw/ci-workflows/.github/workflows/shellcheck.yml@7159f7af3c1dea2a115b31c3574ce47bfb0cf09b # v1.4.3
+    uses: genzouw/ci-workflows/.github/workflows/shellcheck.yml@27f66d762f34f530c05e930829e23811b925cb7d # v1.5.9
