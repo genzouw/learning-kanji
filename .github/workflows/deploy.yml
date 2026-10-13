@@ -28,7 +28,7 @@ env:
   AWS_REGION: ap-northeast-1
   S3_BUCKET: genzouw-static-content
   S3_PREFIX: kanji
-  CLOUDFRONT_DISTRIBUTION_ID: E6OM0XCJX1HGU
+  CLOUDFRONT_DISTRIBUTION_ID: E1YG332UH5YM2R
 
 jobs:
   deploy:
