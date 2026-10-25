@@ -30,4 +30,4 @@ jobs:
       contents: read
       security-events: write
       actions: read
-    uses: genzouw/ci-workflows/.github/workflows/zizmor.yml@8b59dccc8bcc68c33872e25f2e499493737eb742 # v1.5.24
+    uses: genzouw/ci-workflows/.github/workflows/zizmor.yml@d0d986e6a91cfe89391eb7f46306c747203be56b # v1.5.27
